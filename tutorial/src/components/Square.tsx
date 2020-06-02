@@ -20,12 +20,11 @@ const StyledSquare = styled.button`
   }
 `;
 
-export default function Square() {
-  return (
-    <StyledSquare>
-      {
-        // TODO
-      }
-    </StyledSquare>
-  );
+interface Props {
+  value: any;
+  onClick: Function;
+}
+
+export default function Square(props: Props) {
+  return <StyledSquare onClick={() => props.onClick()}>{props.value}</StyledSquare>;
 }

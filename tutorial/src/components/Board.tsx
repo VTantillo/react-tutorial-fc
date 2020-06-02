@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+
+import { calculateWinner } from 'utils';
 import Square from './Square';
 
 const StyledBoard = styled.div``;
@@ -15,10 +17,54 @@ const BoardRow = styled.div`
 `;
 
 export default function Board() {
-  const status = 'Next player: X';
+  const [status, setStatus] = React.useState<string>('Next Player: X');
+  const [isWinner, setIsWinner] = React.useState<Boolean>(false);
+  const [board, setBoard] = React.useState<(string | null)[]>([
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+  ]);
+  const [xIsNext, setXisNext] = React.useState<Boolean>(true);
+
+  React.useEffect(() => {
+    const winner = calculateWinner(board);
+    if (winner) {
+      setIsWinner(true);
+    }
+  }, [board]);
+
+  React.useEffect(() => {
+    if (isWinner) {
+      setStatus('Winner ' + (!xIsNext ? 'X' : 'O'));
+    } else {
+      setStatus('Next Player: ' + (xIsNext ? 'X' : 'O'));
+    }
+  }, [xIsNext, isWinner]);
+
+  function handleClick(i: any) {
+    const squares = board.slice();
+    if (!isWinner && squares[i] === null) {
+      squares[i] = xIsNext ? 'X' : 'O';
+      setBoard(squares);
+      setXisNext(!xIsNext);
+    }
+  }
 
   function renderSquare(i: number) {
-    return <Square />;
+    return (
+      <Square
+        value={board[i]}
+        onClick={() => {
+          handleClick(i);
+        }}
+      />
+    );
   }
 
   return (
